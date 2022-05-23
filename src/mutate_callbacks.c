@@ -1,17 +1,15 @@
+#define STARTSLIDE_DURATION 240
+
 /*
 Pick a random point and set it to either -72, 0, or +72. 
 This drives the inputs toward extreme values that will have large effects. 
 */
-void plane_mutate_point_roundoff(population *pop, entity *father, entity *son){
-    //Select a frame that occurs before the simulation collides. 
-    int collideFrame =((entity_chrom*) father->chromosome[0])->collideFrame;
-    int maxFrame = pop->len_chromosomes;
-    if(collideFrame > 0) maxFrame = collideFrame;
+void slide_mutate_point_roundoff(population *pop, entity *father, entity *son){
     if(!father || !son) die("Null pointer to entity passed.");
     
     //Copy over the data. 
     pop->chromosome_replicate(pop, father, son, 0);
-    int mutate_point = random_int(maxFrame);
+    int mutate_point = random_int(STARTSLIDE_DURATION);
     int8_t prev_value = ((entity_chrom *) father->chromosome[0])->controllerInputs[mutate_point];
     int next_value;
     if(prev_value < -25){
@@ -28,17 +26,13 @@ void plane_mutate_point_roundoff(population *pop, entity *father, entity *son){
 
 //Randomly mutate one of the controller inputs in father and 
 //store the new chromosome in son. 
-void plane_mutate_point_random(population *pop, entity *father, entity *son){
-    //Select a frame that occurs before the simulation collides. 
-    int collideFrame =((entity_chrom*) father->chromosome[0])->collideFrame;
-    int maxFrame = pop->len_chromosomes;
-    if(collideFrame > 0) maxFrame = collideFrame;
+void slide_mutate_point_random(population *pop, entity *father, entity *son){
     if(!father || !son) die("Null pointer to entity passed.");
     
     //Copy over the data. 
     pop->chromosome_replicate(pop, father, son, 0);
     //And perform the mutation. 
-    int mutate_point = random_int(maxFrame);
+    int mutate_point = random_int(STARTSLIDE_DURATION);
     int nextValue = random_int(2*72 + 1); //(0-144, inclusive)
     nextValue -= 72; //-72 to 72, inclusive.
     int8_t controllerInput = (int8_t) nextValue;
@@ -49,11 +43,9 @@ void plane_mutate_point_random(population *pop, entity *father, entity *son){
 
 //Randomly select a region of the flight, and then add a random offset to 
 //all the controller positions in that region. 
-void plane_mutate_region_drift(population *pop, entity *father, entity *son){
-    int collideFrame = ((entity_chrom*) father->chromosome[0])->collideFrame;
-    if(collideFrame <= 0) collideFrame=pop->len_chromosomes;
+void slide_mutate_region_drift(population *pop, entity *father, entity *son){
     int mutate_start, mutate_end;
-    getSplitPoints(collideFrame, &mutate_start, &mutate_end);
+    getSplitPoints(STARTSLIDE_DURATION, &mutate_start, &mutate_end);
     if(mutate_end > mutate_start + 50){
         mutate_end = mutate_start + 10;
     }
@@ -75,11 +67,9 @@ void plane_mutate_region_drift(population *pop, entity *father, entity *son){
 
 
 //Choose a random region in the flight, and set it to a random value. 
-void plane_mutate_region_set(population *pop, entity *father, entity *son){
-    int collideFrame = ((entity_chrom*) father->chromosome[0])->collideFrame;
-    if(collideFrame <= 0) collideFrame=pop->len_chromosomes;
+void slide_mutate_region_set(population *pop, entity *father, entity *son){
     int mutate_start, mutate_end;
-    getSplitPoints(collideFrame, &mutate_start, &mutate_end);
+    getSplitPoints(STARTSLIDE_DURATION, &mutate_start, &mutate_end);
     if(mutate_end - mutate_start > 80){
         mutate_end = mutate_start + 10;
     }
@@ -93,7 +83,7 @@ void plane_mutate_region_set(population *pop, entity *father, entity *son){
     }
 }
 
-void plane_mutate_region_slide(population *pop, entity *father, entity *son){
+void slide_mutate_region_slide(population *pop, entity *father, entity *son){
     //Offset a random region of the flight either forwards or backwards:
     // ABCDEFGHI
     //     |
@@ -132,7 +122,7 @@ int compInts(const void *elem1, const void *elem2){
     return 0;
 }
 //Duplicate or delete some random frames from the flight. 
-void plane_mutate_dilate(population *pop, entity *father, entity *son){
+void slide_mutate_dilate(population *pop, entity *father, entity *son){
     //TRUE means we're deleting. 
     //FALSE means we're inserting.
     int indel_mode = random_boolean();
@@ -182,16 +172,16 @@ void plane_mutate_dilate(population *pop, entity *father, entity *son){
 void joint_mutate(population *pop, entity *father, entity *son){
         int mode = random_int(20);
         if(mode < 3){
-            plane_mutate_region_drift(pop, father, son);
+            slide_mutate_region_drift(pop, father, son);
         }else if (mode < 5){
-            plane_mutate_region_set(pop, father, son);
+            slide_mutate_region_set(pop, father, son);
         }else if (mode < 11){
-            plane_mutate_dilate(pop, father, son);
+            slide_mutate_dilate(pop, father, son);
         }else if (mode < 14){
-            plane_mutate_point_roundoff(pop, father, son);
+            slide_mutate_point_roundoff(pop, father, son);
         }else if (mode < 16){
-            plane_mutate_region_slide(pop, father, son);
+            slide_mutate_region_slide(pop, father, son);
         }else { 
-            plane_mutate_point_random(pop, father, son);
+            slide_mutate_point_random(pop, father, son);
         }
 }

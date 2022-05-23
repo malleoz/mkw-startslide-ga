@@ -8,14 +8,14 @@ void validateNumber(int value, int min, int max, char *name){
         die("Value overflow.");
     }
 }
-#define MIN_FLIGHT_LENGTH 25
+#define STARTSLIDE_DURATION 240
 void getCrossPoints(population *pop, entity_chrom *parent, int *cross_start, int *cross_end){
     int len_chrom = parent->collideFrame;
-    if(len_chrom < MIN_FLIGHT_LENGTH || len_chrom >= pop->len_chromosomes){
+    if(len_chrom < STARTSLIDE_DURATION || len_chrom >= pop->len_chromosomes){
         len_chrom = pop->len_chromosomes;
     }
     getSplitPoints(len_chrom, cross_start, cross_end);
-    validateNumber(len_chrom, MIN_FLIGHT_LENGTH, pop->len_chromosomes, "len chrom.");
+    validateNumber(len_chrom, STARTSLIDE_DURATION, pop->len_chromosomes, "len chrom.");
     if(*cross_end - *cross_start > 40){
         int new_end = (*cross_start + (*cross_end) * 3) / 4;
         *cross_start = (*cross_start * 3 + *cross_end) / 4;
@@ -57,7 +57,7 @@ void copyStretch(int8_t * parent, int8_t *child, int parent_start, int parent_st
 //(The regions will not be of the same size)
 //Then swap those regions, stretching or squooshing the 
 //regions to fit in the gap in the other sequence.
-void plane_crossover_region_scaling(population *pop,             
+void slide_crossover_region_scaling(population *pop,             
         entity *father, entity *mother,
         entity *son, entity *daughter){
     if(!father || !mother || !son || !daughter) die("Null entities passed in.");

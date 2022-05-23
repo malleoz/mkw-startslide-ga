@@ -5,7 +5,7 @@
 //Copy the data pointer from pop into the embryo's startPoint. 
 //You shouldn't need to change this unless you change the 
 //entity_chrom struct. 
-bool plane_chromosome_constructor(population *pop, entity *embryo){
+bool slide_chromosome_constructor(population *pop, entity *embryo){
     if(!pop) die("No pointer to population!");
     if(!embryo) die("No pointer to adam element.");
     if(embryo->chromosome != NULL) die("This embryo was already initalized!");
@@ -34,7 +34,7 @@ bool plane_chromosome_constructor(population *pop, entity *embryo){
 //chromosomeid is ignored. 
 //You shouldn't need to mess with this unless you change the 
 //entity_chrom struct.
-void plane_chromosome_replicate(const population *pop, 
+void slide_chromosome_replicate(const population *pop, 
         entity *src, entity *dest, const int chromosomeid){
     if(!pop) die("No population passed in.");
     if(!src || !dest) die("Null entity passed.");
@@ -52,7 +52,7 @@ void plane_chromosome_replicate(const population *pop,
 //Free the memory held by a chromosome. 
 //You shouldn't need to change this unless you add an allocated
 //region to the entity_chrom struct.
-void plane_chromosome_destructor(population *pop, entity *corpse){
+void slide_chromosome_destructor(population *pop, entity *corpse){
     if(!pop) die("Null pointer to population passed.");
     if(!corpse) die("Null pointer to entity passed.");
     if(corpse->chromosome==NULL) die("Chromosome already deallocated.");

@@ -4,7 +4,7 @@
 #include <stdio.h>
 //A very simple loop that tries to run a simulation. 
 int main(){
-    int numFrames = 1000;
+    int numFrames = 240;
     int8_t *stickPoses = malloc(numFrames*sizeof(int8_t));
     for(int i = 0; i < numFrames; i++){
         stickPoses[i] = 10;
