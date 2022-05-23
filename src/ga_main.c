@@ -3,7 +3,7 @@
 #include <getopt.h>
 #include "run_ga.h"
 
-void readArguments(int argc, char **argv, FILE **playerDat, FILE **goodControllerInputs, FILE **outputFile, int *popSize, int *maxFrames, int *numGenerations){
+void readArguments(int argc, char **argv, FILE **playerDat, FILE **goodControllerInputs, FILE **outputFile, int *popSize, int *numGenerations){
     int c;
     while(1){
         static struct option longopts [] = {
@@ -11,7 +11,6 @@ void readArguments(int argc, char **argv, FILE **playerDat, FILE **goodControlle
             {"good-inputs", required_argument, NULL, 'g'},
             {"output-file", required_argument, NULL, 'o'},
             {"pop-size", required_argument, NULL, 's'},
-            {"max-frames", required_argument, NULL, 'f'},
             {"num-generations", required_argument, NULL, 'n'},
             {0, 0, 0, 0}};
         int option_index = 0;
@@ -42,14 +41,13 @@ void readArguments(int argc, char **argv, FILE **playerDat, FILE **goodControlle
 
 
 int main(int argc, char **argv){
-    FILE *playerDat = NULL;
-    FILE *goodControllerInputs = NULL; 
-    FILE *outputFile = NULL;
-    int popSize = -1;
-    int maxFrames = -1;
+    FILE *playerDat = NULL;     // file containing character + vehicle combo
+    FILE *goodControllerInputs; // input sequence we'd like to base our first generation off of
+    FILE *outputFile = NULL;    // file to write good input sequences to
+    int popSize = -1;           // input sequences generated per generation
     int numGenerations = -1;
 
     readArguments(argc, argv, &playerDat, &goodControllerInputs, &outputFile, &popSize, &maxFrames, &numGenerations);
     return run_ga(playerDat, goodControllerInputs, outputFile,
-        popSize, maxFrames, numGenerations);
+        popSize, numGenerations);
 }
