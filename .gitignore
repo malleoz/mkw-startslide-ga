@@ -1,0 +1,9 @@
+obj/*
+*.swp
+player.dat
+ram.raw
+test_simulation
+simulate_single
+ga_main
+*.txt
+__pycache__
